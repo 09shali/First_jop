@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
-
+import 'dart:html';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:weather_app/constants/app_constants.dart';
 import 'package:weather_app/pages/city_page.dart';
 
 class WeatherPage extends StatefulWidget {
@@ -26,11 +29,13 @@ class _WeatherPageState extends State<WeatherPage> {
  void initState (){
 
  showWeatherByLocation();
-
+  
    super.initState();
  }
-  void showWeatherByLocation() async{
+  Future<void> showWeatherByLocation() async{
     final position = await getCurrentPosition();
+
+    await getWeatherByLocation(position: position);
 
     log('position latitude: ${position. latitude}');
     log('position longitude: ${position. longitude}');
@@ -72,6 +77,33 @@ class _WeatherPageState extends State<WeatherPage> {
   // continue accessing the position of the device.
   return await Geolocator.getCurrentPosition();
 }
+
+  Future<void>getWeatherByLocation({@required Position position}) async{
+    var client = http.Client();
+try {
+
+  Uri _uri = Uri.parse('https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&appid=$openWeatherApiKey');
+ final response = await client.get(_uri);
+
+ if(response.statusCode == 200 || response.statusCode == 201){
+
+final body = response.body;
+ log('response.body ==$body');
+
+ final _data = jsonDecode(body);
+ log('response._data ==$_data');
+ } 
+
+ 
+
+ 
+
+ log('response ==$response');
+
+} catch (e) {
+  throw Exception(e);
+}
+  }
    
    @override
   Widget build(BuildContext context) {
