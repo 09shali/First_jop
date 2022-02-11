@@ -24,7 +24,7 @@ class _WeatherPageState extends State<WeatherPage> {
   
 
   String _celcius = '';
-   String _cityName = '';
+  String _cityName = '';
   String _icon;
   String _description = 'weather for today';
   bool _isLoading = false;

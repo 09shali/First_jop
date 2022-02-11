@@ -7,33 +7,33 @@ static String kelvinToCelcius(double kelvin){
 }
 static String getWeatherIcon(int kelvin){
   if (kelvin < 300) {
-    return '';
+    return '🌩';
   }else if (kelvin < 400){
-    return '';
+    return '🌧';
   }else if (kelvin < 600){
-    return '';
+    return '☔️';
   }else if (kelvin < 700){
-    return '';
+    return '☃️';
   }else if (kelvin < 800){
-    return '';
+    return '🌫';
   }else if (kelvin == 800){
-    return '';
+    return '☀️';
   }else if (kelvin <= 804){
-    return '';
+    return '☁️';
   }else {
-    return'';
+    return'🤷‍';
   }
 }
 
   static String getWeatherMessage(int temp){
     if (temp > 25) {
-      return 'It\'s time';
+      return 'It\'s 🍦 time';
     }else if (temp > 20) {
-      return 'Time for shorts and ';
+      return 'Time for shorts and 👕';
     }else if (temp < 10) {
-      return 'You\' ll need  and ';
+      return 'You\' ll need 🧣 and 🧤';
     }else  {
-      return 'Bring a  just in case ';
+      return 'Bring a 🧥 just in case ';
     }
   }
 
