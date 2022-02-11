@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:weather_app/constants/app_constants.dart';
 import 'package:weather_app/pages/city_page.dart';
+import 'package:weather_app/utils/weather_util.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({Key key, }) : super(key: key);
@@ -21,8 +22,11 @@ class WeatherPage extends StatefulWidget {
 class _WeatherPageState extends State<WeatherPage> {
   
 
-  String _celius = '92';
+  String _celcius = '';
+   String _cityName = '';
+  String _icon;
   String _description = 'weather for today';
+  bool _isLoading = false;
 
 
  @override
@@ -33,6 +37,11 @@ class _WeatherPageState extends State<WeatherPage> {
    super.initState();
  }
   Future<void> showWeatherByLocation() async{
+
+    setState(() {
+      _isLoading = true;
+    });
+
     final position = await getCurrentPosition();
 
     await getWeatherByLocation(position: position);
@@ -88,19 +97,40 @@ try {
  if(response.statusCode == 200 || response.statusCode == 201){
 
 final body = response.body;
- log('response.body ==$body');
+ 
 
- final _data = jsonDecode(body);
- log('response._data ==$_data');
+ final _data = jsonDecode(body) as Map<String, dynamic>;
+
+  _cityName = _data['name'];
+  final kelvin = _data['main']['temp'] as double;
+
+ _celcius = WeatherUtil.kelvinToCelcius(kelvin).toString();
+ _icon = WeatherUtil.getWeatherIcon(kelvin.toInt());
+
+ _description = WeatherUtil.getWeatherMessage(int.parse(_celcius));
+
+  // temp-273.15 = 0 °C
+
+  // _celcius =( temp - 273.15).toStringAsFixed(1);
+  //  _celcius =( kelvin - 273.15).round().toString();
+
+
+ 
+
+//  setState(() {
+   
+//  });
+ setState(() {
+      _isLoading = false;
+    });
  } 
-
- 
-
- 
-
- log('response ==$response');
+  
+  
 
 } catch (e) {
+  setState(() {
+      _isLoading = false;
+    });
   throw Exception(e);
 }
   }
@@ -145,19 +175,40 @@ final body = response.body;
           ),
           child: Center(
            
-            child: Column(
+            child: _isLoading 
+            ? const CircularProgressIndicator(
+              backgroundColor: Colors.white,
+              color: Colors.cyanAccent,
+            ) 
+            : Column(
              
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 SizedBox(height: _size.height * 0.1),
                 Text(
-                  '$_celius \u00B0 ☀',
+                  _celcius.isNotEmpty 
+                  ? '0 \u00B0 ☀'
+                  :'$_celcius \u00B0 $_icon',
                   style: const TextStyle(
                     fontSize: 84,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
+                
+                _cityName.isNotEmpty ? 
+                Padding(
+                  padding: const EdgeInsets.only(top:24.0),
+                  child: Text (
+                    _cityName,
+                    style: const TextStyle(
+                      fontSize: 34,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                )
+                :const SizedBox.shrink(),
                 SizedBox(height: _size.height * 0.05),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal:12.0),
