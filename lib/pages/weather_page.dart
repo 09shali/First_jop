@@ -1,6 +1,7 @@
-import 'dart:convert';
+import 'dart:convert'as convert;
 import 'dart:developer';
 import 'dart:html';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -91,7 +92,7 @@ class _WeatherPageState extends State<WeatherPage> {
     var client = http.Client();
 try {
 
-  Uri _uri = Uri.parse('https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&appid=$openWeatherApiKey');
+  Uri _uri = Uri.parse('$baseUrl?&lat=${position.latitude}&lon=${position.longitude}&appid=$openWeatherApiKey');
  final response = await client.get(_uri);
 
  if(response.statusCode == 200 || response.statusCode == 201){
@@ -99,12 +100,12 @@ try {
 final body = response.body;
  
 
- final _data = jsonDecode(body) as Map<String, dynamic>;
+ final _data = convert.json.decode(body) as Map<String, dynamic>;
 
   _cityName = _data['name'];
-  final kelvin = _data['main']['temp'] as double;
+  final kelvin = _data['main']['temp'] as num;
 
- _celcius = WeatherUtil.kelvinToCelcius(kelvin).toString();
+ _celcius = WeatherUtil.kelvinToCelcius(kelvin);
  _icon = WeatherUtil.getWeatherIcon(kelvin.toInt());
 
  _description = WeatherUtil.getWeatherMessage(int.parse(_celcius));
@@ -134,6 +135,44 @@ final body = response.body;
   throw Exception(e);
 }
   }
+
+  Future <void> getWeatherByCity(String city) async {
+
+      setState(() {
+        _isLoading = true;
+      });
+
+    try {
+      
+        final client = http.Client;
+
+        final url = '$baseUrl?q=$city&appid=$openWeatherApiKey';
+
+        Uri uri = Uri.parse(url);
+
+        final response = await http.get(uri);
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          final _data = convert.jsonDecode(response.body) as Map<String, dynamic>;
+
+          _cityName = _data['name'];
+           final kelvin = _data['main']['temp'] as num;
+
+            _celcius = WeatherUtil.kelvinToCelcius(kelvin);
+ _icon = WeatherUtil.getWeatherIcon(kelvin.toInt());
+
+ _description = WeatherUtil.getWeatherMessage(int.parse(_celcius));
+
+  setState(() {
+        _isLoading = false;
+      });
+
+        }
+
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
    
    @override
   Widget build(BuildContext context) {
@@ -154,9 +193,12 @@ final body = response.body;
             ),
           ),
           actions: [
-            IconButton(onPressed: (){
-              Navigator.push(context,
+            IconButton(onPressed: () async{
+             final _typedCity = await Navigator.push(context,
               MaterialPageRoute(builder: (context)=> CityPage()));
+
+              await getWeatherByCity(_typedCity);
+
             },
           icon: const Icon(
             Icons.location_city,

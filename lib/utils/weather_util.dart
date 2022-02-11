@@ -2,8 +2,8 @@ import 'dart:html';
 
 class WeatherUtil {
 
-static int kelvinToCelcius(double kelvin){
-  return (kelvin - 273.15).round();
+static String kelvinToCelcius(double kelvin){
+  return (kelvin - 273.15).round().toString();
 }
 static String getWeatherIcon(int kelvin){
   if (kelvin < 300) {
