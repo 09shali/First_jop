@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/misaldar/misal_page.dart';
+import 'package:weather_app/models/weather_model.dart';
+import 'package:weather_app/pages/weather_model_page.dart';
 import 'package:weather_app/pages/weather_page.dart';
 
 void main() {
@@ -17,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const WeatherPage(),
+      home: const WeatherModelPage(),
     );
   }
 }

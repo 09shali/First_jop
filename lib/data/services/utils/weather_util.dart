@@ -37,4 +37,6 @@ static String getWeatherIcon(int kelvin){
     }
   }
 
+  static String getDescription(int parse) {}
+
 }

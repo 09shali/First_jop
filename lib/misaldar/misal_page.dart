@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class MisalPage extends StatefulWidget {
@@ -15,6 +17,17 @@ class _MisalPageState extends State<MisalPage> {
       super.initState();
       getName();
     }
+    @override
+    void didChangeDependecies(){
+        super.didChangeDependencies();
+        log('didChangeDependecies ===>>');
+    }
+       @override
+    void dispose(){
+
+      log('dispose ===>>');
+        super.dispose();
+      }
 
   Future <void>getName() async{
 
